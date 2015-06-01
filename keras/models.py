@@ -55,7 +55,7 @@ def slice_X(X, start=None, stop=None):
 
 class Model(object):
 
-    def get_output(self, train):
+    def get_output(self, layer_index, train):
         raise NotImplementedError
 
     def get_input(self, train):
@@ -69,8 +69,8 @@ class Model(object):
         self.X_train = self.get_input(train=True)
         self.X_test = self.get_input(train=False)
 
-        self.y_train = self.get_output(train=True)
-        self.y_test = self.get_output(train=False)
+        self.y_train = self.get_output(layer_index=-1, train=True)
+        self.y_test = self.get_output(layer_index=-1, train=False)
 
         # target of model
         self.y = T.zeros_like(self.y_train)
@@ -149,8 +149,8 @@ class Sequential(Model):
             self.constraints += [constraints.identity for _ in range(len(layer.params))]
 
 
-    def get_output(self, train=False):
-        return self.layers[-1].get_output(train)
+    def get_output(self, layer_index=-1, train=False):
+        return self.layers[layer_index].get_output(train)
 
 
     def get_input(self, train=False):
